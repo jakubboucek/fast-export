@@ -219,10 +219,13 @@ def export_commit(ui,repo,revision,old_marks,max,count,authors,
 
   wr('commit refs/heads/%s' % branch)
   wr('mark :%d' % (revision+1))
-  wr('data %d' % (len(desc)+1)) # wtf?
-  wr(desc)
   wr('author %s %d %s' % (user,time,timezone))
   wr('committer %s %d %s' % ('Jakub Bouček <pan@jakubboucek.cz>',int(datetime.datetime.now().strftime('%s')),timezone))
+
+  sha = str(revnode.encode('hex_codec'))
+  desc_decorated = desc + '\n\n(imported from Hg rev: [' + str(revision) + '] ' + sha[:7] + ')'
+  wr('data %d' % (len(desc_decorated)+1)) # wtf?
+  wr(desc_decorated)
   wr()
 
   ctx=revsymbol(repo,str(revision))
