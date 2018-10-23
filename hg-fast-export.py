@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 
 # Copyright (c) 2007, 2008 Rocco Rutte <pdmef@gmx.net> and others.
 # License: MIT <http://www.opensource.org/licenses/mit-license.php>
@@ -11,6 +12,7 @@ from optparse import OptionParser
 import re
 import sys
 import os
+import datetime
 
 if sys.platform == "win32":
   # On Windows, sys.stdout is initially opened in text mode, which means that
@@ -217,11 +219,10 @@ def export_commit(ui,repo,revision,old_marks,max,count,authors,
 
   wr('commit refs/heads/%s' % branch)
   wr('mark :%d' % (revision+1))
-  if sob:
-    wr('author %s %d %s' % (get_author(desc,user,authors),time,timezone))
-  wr('committer %s %d %s' % (user,time,timezone))
   wr('data %d' % (len(desc)+1)) # wtf?
   wr(desc)
+  wr('author %s %d %s' % (user,time,timezone))
+  wr('committer %s %d %s' % ('Jakub Bouček <pan@jakubboucek.cz>',int(datetime.datetime.now().strftime('%s')),timezone))
   wr()
 
   ctx=revsymbol(repo,str(revision))
