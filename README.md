@@ -1,6 +1,19 @@
 hg-fast-export.(sh|py) - mercurial to git converter using git-fast-import
 =========================================================================
 
+Commands
+--------
+
+### Restart process & init repo
+```
+rm -rf .git && git init && git config core.ignoreCase false
+```
+
+### Migration
+```
+../fast-export/hg-fast-export.sh -r ../mercurial-project -A ../author-map.txt
+```
+
 Legal
 -----
 
