@@ -13,6 +13,7 @@ import re
 import sys
 import os
 import datetime
+from time import sleep
 
 if sys.platform == "win32":
   # On Windows, sys.stdout is initially opened in text mode, which means that
@@ -227,6 +228,8 @@ def export_commit(ui,repo,revision,old_marks,max,count,authors,
   wr('data %d' % (len(desc_decorated)+1)) # wtf?
   wr(desc_decorated)
   wr()
+
+  sleep(1)
 
   ctx=revsymbol(repo,str(revision))
   man=ctx.manifest()
