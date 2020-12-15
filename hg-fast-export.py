@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 
 # Copyright (c) 2007, 2008 Rocco Rutte <pdmef@gmx.net> and others.
 # License: MIT <http://www.opensource.org/licenses/mit-license.php>
@@ -12,6 +13,8 @@ import re
 import sys
 import os
 import pluginloader
+from time import sleep
+import datetime
 
 if sys.platform == "win32":
   # On Windows, sys.stdout is initially opened in text mode, which means that
@@ -199,6 +202,10 @@ def export_file_contents(ctx,manifest,files,hgtags,encoding='',plugins={}):
       filename=file_data['filename']
       file_ctx=file_data['file_ctx']
 
+    if filename == "":
+      sys.stderr.write('Skip %s\n' % (file))
+      continue
+
     wr('M %s inline %s' % (gitmode(manifest.flags(file)),
                            strip_leading_slash(filename)))
     wr('data %d' % len(d)) # had some trouble with size()
@@ -282,12 +289,18 @@ def export_commit(ui,repo,revision,old_marks,max,count,authors,
 
   wr('commit refs/heads/%s' % branch)
   wr('mark :%d' % (revision+1))
-  if sob:
-    wr('author %s %d %s' % (author,time,timezone))
-  wr('committer %s %d %s' % (user,time,timezone))
-  wr('data %d' % (len(desc)+1)) # wtf?
-  wr(desc)
+  wr('author %s %d %s' % (user,time,timezone))
+  wr('committer %s %d %s' % ('Jakub Bouček <pan@jakubboucek.cz>',int(datetime.datetime.now().strftime('%s')),timezone))
+
+
+  sha = str(revnode.encode('hex_codec'))
+  desc_decorated = desc + '\n\n(imported from Hg rev: [' + str(revision) + '] ' + sha[:7] + '; branch: \'' + branch + '\')'
+  wr('data %d' % (len(desc_decorated)+1)) # wtf?
+  wr(desc_decorated)
+
   wr()
+
+  #sleep(1)
 
   ctx=revsymbol(repo,str(revision))
   man=ctx.manifest()
